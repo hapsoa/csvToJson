@@ -1,8 +1,11 @@
-console.log('csvToJsonTest.js start');
-const fs = require('fs');
-const csv = require('csvtojson');
-const csvFilePath = 'public/csv-dir/1764edges.csv';
-const jsonFileResultPath = 'public/json-result/1764edges.json';
+console.log("csvToJsonTest.js start");
+const fs = require("fs");
+const csv = require("csvtojson");
+const _ = require("lodash");
+// csv 파일의 경로
+const csvFilePath = "public/csv-dir/2year-UNdata.csv";
+// 결과물인 json 파일의 경로
+const jsonFileResultPath = "public/json-result/2year-UNdata.json";
 csv()
   .fromFile(csvFilePath)
   .then(jsonObj => {
@@ -13,19 +16,33 @@ csv()
      * 	{a:"4", b:"5". c:"6"}
      * ]
      */
-    fs.writeFile(jsonFileResultPath, JSON.stringify(jsonObj), err => {
+
+    const filteredUnData = filterUnDataProperty(jsonObj);
+
+    fs.writeFile(jsonFileResultPath, JSON.stringify(filteredUnData), err => {
       if (err) {
         console.error(err);
         return;
       }
-      console.log('File has been created');
+      console.log("File has been created");
     });
   });
 
-// Async / await usage
-// async function function1() {
-//   const jsonArray = await csv().fromFile(csvFilePath);
-//   console.log('jsonArray', jsonArray);
-// }
+/**
+ * unData중 필요없는 property를 제거하는 함수이다.
+ */
+function filterUnDataProperty(unData) {
 
-// function1();
+  const filteredUnData = _.map(unData, datum => {
+    return {
+      rcid: datum.rcid,
+      vote: datum.vote,
+      Country: datum.Country,
+      Countryname: datum.Countryname,
+      year: datum.year
+    };
+  });
+
+  console.log("filteredUnData", filteredUnData);
+  return filteredUnData;
+}

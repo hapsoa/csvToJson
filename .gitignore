@@ -1,3 +1,7 @@
 .idea
 .DS_Store
 node_modules
+
+# 대용량 데이터 추가안하기
+public/csv-dir/
+public/json-result/
